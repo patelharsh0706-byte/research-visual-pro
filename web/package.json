@@ -1,0 +1,23 @@
+{
+  "name": "research-visual-pro-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@astrojs/mdx": "^4.3.13",
+    "@astrojs/node": "^9.2.2",
+    "astro": "^5.16.6",
+    "rehype-external-links": "^3.0.0",
+    "remark-gfm": "^4.0.0",
+    "remark-smartypants": "^3.0.2",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "pnpm@10.26.2"
+}

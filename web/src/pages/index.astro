@@ -1,0 +1,359 @@
+---
+// Auto-discover every paper config in scrolly/data/ — no manual updates needed.
+const allConfigs = import.meta.glob("../scrolly/data/*.ts", { eager: true });
+
+const papers = Object.entries(allConfigs)
+  .map(([path, mod]: [string, any]) => {
+    const config = mod.config || mod.default || {};
+    const slug = path.replace("../scrolly/data/", "").replace(".ts", "");
+    return { slug, config };
+  })
+  .filter(({ config }) => config.metadata?.title)
+  .sort((a, b) => {
+    // newest year first; fall back to alphabetical
+    const ya = Number(a.config.hero?.label?.match(/\d{4}/)?.[0] || 0);
+    const yb = Number(b.config.hero?.label?.match(/\d{4}/)?.[0] || 0);
+    return yb - ya;
+  });
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Research Visual Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --paper:        #F9F8F5;
+        --paper-card:   #FFFFFF;
+        --ink:          #1A1A2E;
+        --ink-light:    #4A4A6A;
+        --ink-muted:    #8A8AA0;
+        --accent:       #1A5276;
+        --border:       rgba(44,62,80,0.12);
+        --border-hover: rgba(26,82,118,0.30);
+        --font-sans:    'Inter', system-ui, sans-serif;
+        --font-serif:   'Lora', Georgia, serif;
+      }
+
+      html, body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--font-sans);
+        min-height: 100vh;
+      }
+
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(26,82,118,0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(192,57,43,0.05) 1px, transparent 1px);
+        background-size: 34px 34px;
+        pointer-events: none;
+        z-index: 0;
+      }
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle at 50% 0%,
+          transparent 0%,
+          color-mix(in srgb, var(--paper) 55%, transparent) 65%,
+          var(--paper) 100%);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      nav, main, footer { position: relative; z-index: 1; }
+
+      /* ── Nav ── */
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 28px 48px;
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-brand {
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-muted);
+        text-decoration: none;
+      }
+
+      /* ── Main ── */
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 80px 48px 120px;
+      }
+
+      .page-header { margin-bottom: 72px; }
+      .page-header h1 {
+        font-family: var(--font-serif);
+        font-size: clamp(2.2rem, 5vw, 3.2rem);
+        font-weight: 600;
+        line-height: 1.2;
+        color: var(--ink);
+        margin-bottom: 16px;
+      }
+      .page-header p {
+        font-size: 1rem;
+        line-height: 1.7;
+        color: var(--ink-muted);
+        max-width: 540px;
+      }
+      .header-divider {
+        margin-top: 40px;
+        border: none;
+        border-top: 1px solid var(--border);
+      }
+
+      .section-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-muted);
+        margin-bottom: 32px;
+      }
+
+      /* ── Cards grid ── */
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+      }
+
+      .card {
+        display: flex;
+        flex-direction: column;
+        background: var(--paper-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      }
+      .card:hover {
+        border-color: color-mix(in srgb, var(--card-accent) 50%, transparent);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 40px color-mix(in srgb, var(--card-accent) 12%, transparent);
+      }
+
+      /* ── Mini hero thumbnail ── */
+      .card-thumb {
+        position: relative;
+        height: 210px;
+        overflow: hidden;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 24px 20px 20px;
+        gap: 5px;
+        border-bottom: 1px solid var(--border);
+      }
+      .card-thumb-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background:
+          radial-gradient(500px 260px at 15% 10%,
+            color-mix(in srgb, var(--card-accent) 14%, transparent), transparent 60%),
+          radial-gradient(400px 260px at 85% 90%,
+            color-mix(in srgb, var(--card-secondary, var(--card-accent)) 10%, transparent), transparent 55%),
+          var(--paper);
+      }
+      .card-thumb-pattern {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background-image:
+          linear-gradient(color-mix(in srgb, var(--card-accent) 8%, transparent) 1px, transparent 1px),
+          linear-gradient(90deg, color-mix(in srgb, var(--card-accent) 6%, transparent) 1px, transparent 1px);
+        background-size: 24px 24px;
+      }
+      .card-thumb-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        background: radial-gradient(ellipse at center, transparent 30%, color-mix(in srgb, var(--paper) 45%, transparent) 100%);
+      }
+
+      /* Mini hero text */
+      .mini-label {
+        position: relative; z-index: 3;
+        font-family: var(--font-sans);
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--card-accent);
+        margin-bottom: 4px;
+      }
+      .mini-title {
+        position: relative; z-index: 3;
+        font-family: var(--font-sans);
+        font-size: 1.55rem;
+        font-weight: 700;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+      }
+      /* The hero-accent span inside titleHtml gets the paper's gradient */
+      .mini-title :global(.hero-accent) {
+        background: linear-gradient(135deg,
+          var(--card-accent),
+          var(--card-secondary, color-mix(in srgb, var(--card-accent) 60%, #27AE60)));
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .mini-sub {
+        position: relative; z-index: 3;
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        font-weight: 500;
+        color: var(--ink-light);
+        margin-top: 2px;
+      }
+      .mini-authors {
+        position: relative; z-index: 3;
+        font-family: var(--font-serif);
+        font-size: 0.68rem;
+        font-style: italic;
+        color: var(--ink-muted);
+      }
+
+      /* ── Card body ── */
+      .card-body {
+        padding: 20px 24px 20px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+      .card-desc {
+        font-size: 0.83rem;
+        line-height: 1.6;
+        color: var(--ink-muted);
+        flex: 1;
+        margin-bottom: 20px;
+      }
+      .card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top: 1px solid var(--border);
+        padding-top: 16px;
+      }
+      .card-meta { font-size: 0.72rem; color: var(--ink-muted); }
+      .card-cta {
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--card-accent);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: gap 0.2s;
+      }
+      .card:hover .card-cta { gap: 10px; }
+
+      /* ── Footer ── */
+      footer {
+        text-align: center;
+        padding: 40px 48px;
+        border-top: 1px solid var(--border);
+        font-size: 0.75rem;
+        color: var(--ink-muted);
+        letter-spacing: 0.06em;
+      }
+
+      @media (max-width: 680px) {
+        nav, main, footer { padding-left: 24px; padding-right: 24px; }
+        .cards-grid { grid-template-columns: 1fr; }
+        main { padding-top: 48px; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <nav>
+      <a class="nav-brand" href="/">Research Visual Pro</a>
+    </nav>
+
+    <main>
+
+      <header class="page-header">
+        <h1>Research, made<br />scroll-driven visual.</h1>
+        <p>Drop in a dense academic PDF. Get back an interactive story — real charts, real numbers, guided narrative.</p>
+        <hr class="header-divider" />
+      </header>
+
+      <p class="section-label">Visual Papers — {papers.length} published</p>
+
+      <div class="cards-grid">
+        {papers.map(({ slug, config }) => {
+          const accent   = config.theme?.accent    || "#1A5276";
+          const secondary = config.theme?.secondary || "";
+          const label    = config.hero?.label       || "";
+          const titleHtml = config.hero?.titleHtml  || config.metadata?.title || "";
+          const subHtml  = config.hero?.subtitleHtml || "";
+          const authors  = config.hero?.authorsHtml  || "";
+          const desc     = config.metadata?.description || "";
+          const meta     = `${authors} · ${label}`.replace(/^·\s*/, "").replace(/\s*·\s*$/, "");
+
+          return (
+            <a
+              class="card"
+              href={`/${slug}`}
+              style={`--card-accent: ${accent}; --card-secondary: ${secondary};`}
+            >
+              <div class="card-thumb">
+                <div class="card-thumb-bg"></div>
+                <div class="card-thumb-pattern"></div>
+                <div class="card-thumb-overlay"></div>
+                {label && <p class="mini-label">{label}</p>}
+                <h2 class="mini-title"><Fragment set:html={titleHtml} /></h2>
+                {subHtml && <p class="mini-sub"><Fragment set:html={subHtml} /></p>}
+                {authors && <p class="mini-authors"><Fragment set:html={authors} /></p>}
+              </div>
+              <div class="card-body">
+                {desc && <p class="card-desc">{desc}</p>}
+                <div class="card-footer">
+                  <span class="card-meta">{meta}</span>
+                  <span class="card-cta">
+                    Explore
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+
+    </main>
+
+    <footer>Research Visual Pro &mdash; Turn any paper into a scroll-driven visual story.</footer>
+
+  </body>
+</html>

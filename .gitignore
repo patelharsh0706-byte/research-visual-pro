@@ -1,0 +1,34 @@
+# Node / Astro
+web/node_modules/
+web/dist/
+web/.astro/
+web/.vercel/
+
+# Python
+generator/__pycache__/
+generator/**/__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+__pycache__/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / local env
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# pnpm
+web/.pnpm-store/
+
+# Generator outputs (generated per-run, not tracked)
+generator/output/

@@ -1,0 +1,100 @@
+---
+layout: ../layouts/ScrollyLayout.astro
+configId: drug-repurposing-pushpakom-2019
+---
+
+import ScrollySection from '../components/scrolly/ScrollySection.astro';
+
+<ScrollySection id="landscape">
+  <div class="section-label">Section 01</div>
+  ## The Unmet Need
+
+  There are more than **7,000 rare diseases** catalogued today. Of those, over **95% have no approved pharmacological treatment**. Traditional drug development — costing $2–3 billion per molecule and taking 10–15 years — simply cannot scale to address this long tail.
+
+  Drug repurposing offers a structural escape: instead of starting from zero, scientists ask whether a molecule *already in use for one disease* might treat another. The target is already validated. The safety profile is often known. The regulatory path is shorter.
+
+  <div class="data-source-tag">Source: Pushpakom et al., Nature Reviews Drug Discovery, 2019</div>
+</ScrollySection>
+
+<ScrollySection id="cost">
+  <div class="section-label">Section 02</div>
+  ## The Economic Case
+
+  The numbers are stark. Developing a repurposed drug costs on average **$300 million** — roughly one-tenth of the **$2–3 billion** required for a new chemical entity. Development timelines compress from 10–15 years to approximately **5–7 years**.
+
+  The economic argument matters because it determines what gets funded. A therapeutic that costs ten times less to develop can be viable for patient populations that no big-pharma budget would otherwise justify.
+
+  * **Cost savings:** ~90% reduction in development spend
+  * **Time savings:** ~60% reduction in development timeline
+  * **Risk reduction:** Phase I safety largely established from prior use
+
+  <div class="data-source-tag">Source: Table 1 & §Cost analysis, Pushpakom et al. 2019</div>
+</ScrollySection>
+
+<ScrollySection id="pathways">
+  <div class="section-label">Section 03</div>
+  ## How Repurposed Drugs are Found
+
+  Four major pathways lead to new indications. The oldest is **serendipitous observation** — Sildenafil was a cardiovascular candidate until its side effect profile revealed an entirely different market; Minoxidil was an antihypertensive before it became a hair-loss treatment.
+
+  **Clinical observation** — noticing unexpected patient responses — gave us Lenalidomide (thalidomide's safer successor) for multiple myeloma. **Computational screening** now allows researchers to cross-match gene expression signatures of diseases against databases of known drug profiles, identifying candidates at scale. A recent GWAS study enriched the candidate gene set **2.7-fold**, identifying **92 genes** relevant to repurposing.
+
+  The newest frontier: **multi-omics and EHR mining**. One study cross-referenced **9.4 million lab tests** across **500,000 patients** to generate **17,000 drug-disease associations** — more candidates than the entire history of serendipitous discovery.
+
+  <div class="data-source-tag">Source: §Discovery strategies, Pushpakom et al. 2019</div>
+</ScrollySection>
+
+<ScrollySection id="commercial">
+  <div class="section-label">Section 04</div>
+  ## The Revenue Landscape of Successes
+
+  When repurposing works, the commercial upside is massive — but the distribution is highly skewed. **Lenalidomide** (repurposed from thalidomide) generated **$8.2 billion** in annual revenue by 2017. **Rituximab** — originally developed for lymphoma, now used across several oncology indications — reached **$7 billion** in 2015.
+
+  Most repurposed drugs, however, cluster far below that level. Fingolimod sits near the group average ($3.1B). Celecoxib, Sildenafil, Atomoxetine, Minoxidil, and Raloxifene all fall below it.
+
+  This winner-takes-all pattern shapes investor behaviour: large pharma chases blockbuster indications (oncology, autoimmune), while smaller rare-disease markets — despite the unmet need — often go unfunded.
+
+  <div class="data-source-tag">Source: Table 1 commercial revenues, Pushpakom et al. 2019</div>
+</ScrollySection>
+
+<ScrollySection id="policy">
+  <div class="section-label">Section 05</div>
+  ## The Regulatory Scaffolding
+
+  Governments use policy levers to incentivise orphan drug development where market forces fail. The **United States Orphan Drug Act (1983)** remains the most comprehensive package: 7 years of market exclusivity, a 50% tax credit on clinical trial costs, and full FDA fee waivers. It triggered a tenfold increase in orphan drug approvals.
+
+  The **EU**, **Japan**, and **Australia** each followed with their own frameworks — offering 10-year exclusivity (EU and Japan) or 5-year data exclusivity (Australia). The key gap: **pre-competitive data sharing**. No jurisdiction yet mandates open access to failed trial data, which means negative results from publicly-funded repurposing screens remain invisible to the wider research community.
+
+  <div class="data-source-tag">Source: §Regulatory policies, Pushpakom et al. 2019</div>
+</ScrollySection>
+
+<ScrollySection id="challenges">
+  <div class="section-label">Section 06</div>
+  ## Why Repurposing Still Fails
+
+  The economic and scientific case for repurposing is strong — yet the clinical failure rate remains high. Three prominent examples from Table 2:
+
+  * **Latrepirdine (2011):** Failed Phase III for Alzheimer's disease despite earlier Phase II signals.
+  * **Ceftriaxone (2014):** Failed Phase III for ALS — an antibiotic that had shown neuroprotective properties *in vitro* did not translate.
+  * **Topiramate (2014):** Failed Phase III for PTSD, a psychiatric indication added post-approval for epilepsy.
+
+  Common failure modes: **mechanistic assumptions don't translate** from animal models to humans; **dosing windows** established for original indication may not match the new one; **IP barriers** discourage investment in unpatentable old molecules; and **data silos** prevent researchers from seeing what has already been tried and failed.
+
+  <div class="data-source-tag">Source: Table 2 & §Challenges, Pushpakom et al. 2019</div>
+</ScrollySection>
+
+<ScrollySection id="recommendations">
+  <div class="section-label">Section 07</div>
+  ## Six Recommendations
+
+  Pushpakom et al. close with six structural recommendations. The science is ready; the bottleneck is organisational:
+
+  1. **Open data repositories** — share negative trial results and preclinical screens publicly; NIH-NCATS and MRC-AstraZeneca collaborations ($12.7M and £7M respectively) are early models.
+  2. **Standardised phenotypic assays** — harmonise how drug responses are measured so computational predictions are comparable across labs.
+  3. **Integrated computational pipelines** — connect transcriptomic, proteomic, and clinical databases into a single queryable stack.
+  4. **Pre-competitive consortia** — pool IP between pharma companies for diseases too small for solo investment.
+  5. **Smarter clinical trial design** — use adaptive designs and biomarker stratification to cut attrition.
+  6. **Patient registries** — real-world data from patients on existing drugs is an under-exploited signal for off-label efficacy.
+
+  <div class="data-source-tag">Source: §Recommendations, Pushpakom et al. 2019</div>
+</ScrollySection>
