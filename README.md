@@ -1,31 +1,169 @@
-# research-visual-pro
+# Research Visual Pro
 
-Turn a dense research paper into an interactive, scroll-driven visual story so it is *understood*, not just *summarized*.
+> Drop in a dense academic PDF. Get back an interactive, scroll-driven visual story — real charts, real numbers, guided narrative.
 
-## The problem
+**Live demo →** *(coming soon — Vercel deploy in progress)*
 
-Reading research papers is slow, dense, and boring. You lose the concepts in walls of prose. Existing AI tools (SciSpace, Elicit, Consensus, SciSummary) attack this by producing **more text** - summaries, chat-with-PDF, extracted tables. Almost nobody turns the paper into a **structured visual narrative**.
+---
 
-## The insight
+## About
 
-The gap is *visual output*, not *summary output*. A paper has a natural arc - question → method → key result → implication. If you render that arc as **scrollytelling** (narrative on the left, a synchronized chart on the right that updates as you scroll), the concepts land.
+Research papers are hard to read. Existing AI tools respond with *more text* — summaries, chat-with-PDF, extracted tables. **Research Visual Pro** takes a different lane: it turns a paper into a **scrollytelling page** — narrative on the left, a synchronized D3 chart on the right that updates as you scroll.
 
-The rendering engine for this already exists and is explicitly reusable: alharkan's `scrolly/` system (Astro + D3 + TypeScript) from `github.com/alharkan7/alharkan7.github.io`. A human writes the narrative (MDX) and the data (TS config) by hand today. **Our product is an LLM that generates both from a PDF.** That is the whole thesis in one sentence.
+A 7-agent LLM pipeline reads the PDF, plans a narrative arc (question → method → result → implication), selects the right visualization for each beat, extracts real numbers from the paper, and writes the two files the render engine needs. The render engine itself is pure Astro + D3 — no hallucinated diagrams, no invented data.
 
-## Why now / competitive read (from /last30days, 2026-06-21)
+**The thesis in one sentence:** a human writes the narrative and data config by hand today; this pipeline generates both from a PDF.
 
-- Text-summary tools are crowded; structured-visual-output is the open lane.
-- Google's **PaperBanana** (Feb 2026) and **Napkin** prove demand for paper→visual, but they generate single diagrams, not full guided narratives.
-- **ScrollyVis (IEEE TVCG)** academically validated scientific scrollytelling and named the exact bottleneck: *"not all scientists possess web-development skills."* The scrolly template solves the dev half; the LLM solves the authoring half.
-- Positioning warning: academics are visibly AI-fatigued (r/Professors). Sell **comprehension**, never "AI-generated science."
+---
 
-See [research/competitive-landscape.md](research/competitive-landscape.md) for sources.
+## Demo
 
-## Scope decisions (locked)
+| Homepage | Paper page |
+|---|---|
+| Auto-discovered paper cards with mini hero thumbnails | Scroll-driven narrative with synchronized D3 charts |
 
-- **v1 = scrollytelling only.** Faithful D3 charts driven by real numbers extracted from the paper. No generative imagery in the core loop.
-- **Gemini / Nano Banana Pro is deferred**, and only ever as a narrow, labeled, fallback "concept illustration" lane for qualitative/theory papers the 14 fixed viz types cannot render. Gated behind a faithfulness check (redraw the paper's own figure, never invent). Adding it now multiplies the hardest unsolved problem (LLM-picks-right-visual) by a second one (don't-hallucinate-the-science).
+---
 
-## Status
+## How it works
 
-Planning. See [ROADMAP.md](ROADMAP.md) for the build order and [ARCHITECTURE.md](ARCHITECTURE.md) for the pipeline.
+```
+PDF / arXiv URL
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────┐
+│  7-Agent Python Pipeline (generator/)                       │
+│                                                             │
+│  1 Extractor   → text, tables, figures, stats               │
+│  2 StoryPlanner → 5-8 narrative beats with roles + layout   │
+│  3 ChartSelector → best viz type + visual metaphor per beat │
+│  4 ConfigWriter → valid TypeScript config object            │
+│  5 Validator   → schema-check against the viz registry      │
+│  6 CustomViz   → D3 TypeScript module for novel charts      │
+│  7 Reviewer    → benchmark audit + fill missing fields      │
+└─────────────────────────────────────────────────────────────┘
+     │
+     ▼
+  web/src/scrolly/data/<slug>.ts   ← config
+  web/src/pages/<slug>.mdx         ← narrative
+     │
+     ▼
+  Astro + D3 render engine → scrollytelling page
+```
+
+---
+
+## Tech stack
+
+| Layer | Tech |
+|---|---|
+| Frontend | [Astro 5](https://astro.build) (static output) + MDX |
+| Charts | [D3.js v7](https://d3js.org) (CDN global, 14 viz modules) |
+| Styling | CSS custom properties, Lora + Inter (Google Fonts) |
+| Generator | Python 3.11+, [Anthropic SDK](https://github.com/anthropics/anthropic-sdk-python) |
+| LLM | Claude Sonnet (planning/config) · Claude Opus (custom viz code) |
+| Deploy | Vercel (static) |
+
+---
+
+## Viz library (14 types)
+
+`bars` · `sem` · `scatter` · `matrix` · `timeline` · `bubbles` · `map` · `market` · `equation` · `accuracy` · `precision` · `dualmap` · `sentiment` · `upgrade`
+
+Each module is a pure function: `render({ mountEl, props })` — reads `globalThis.d3`, colors via CSS variables, fallback data baked in.
+
+---
+
+## Published papers
+
+| Paper | Year | Key viz |
+|---|---|---|
+| Drug Repurposing — Pushpakom et al. | 2019 | SEM, bars, scatter, matrix |
+| Licensing & Learning — Kelchtermans & Verboven | 2022 | Bars, scatter, precision |
+
+---
+
+## Run locally
+
+```bash
+# Clone
+git clone https://github.com/patelharsh0706-byte/research-visual-pro.git
+cd research-visual-pro/web
+
+# Install deps
+pnpm install
+
+# Dev server
+pnpm dev
+# → http://localhost:4321
+```
+
+**Requirements:** Node 20+, pnpm 9+
+
+---
+
+## Generate a new paper page
+
+```bash
+cd generator
+pip install anthropic pymupdf
+
+# From a local PDF
+python3 pipeline.py --pdf ../samples/papers/your-paper.pdf
+
+# From an arXiv URL
+python3 pipeline.py --arxiv https://arxiv.org/abs/XXXX.XXXXX
+```
+
+Output is written to `web/src/scrolly/data/<slug>.ts` and `web/src/pages/<slug>.mdx`. The homepage auto-discovers it — no manual updates needed.
+
+**Requirements:** Python 3.11+, Anthropic API key in `ANTHROPIC_API_KEY`
+
+---
+
+## Project structure
+
+```
+research-visual-pro/
+├── web/                          ← Astro frontend
+│   └── src/
+│       ├── pages/                ← one .mdx per paper + index.astro
+│       ├── scrolly/
+│       │   ├── data/             ← generated TS configs
+│       │   └── viz/              ← 14 D3 render modules
+│       ├── layouts/ScrollyLayout.astro
+│       └── components/scrolly/
+├── generator/                    ← 7-agent Python pipeline
+│   ├── agents/                   ← agent_extractor … agent_reviewer
+│   ├── schemas/                  ← viz registry + paper data schema
+│   └── pipeline.py               ← orchestrator
+├── samples/
+│   └── gold/                     ← reference configs for LLM grading
+└── docs/                         ← architecture notes
+```
+
+---
+
+## Competitive context
+
+Text-summary tools (SciSpace, Elicit, Consensus) are crowded. Visual-output for papers is the open lane. Google's **PaperBanana** and **Napkin** generate single diagrams — not full guided narratives. IEEE TVCG's **ScrollyVis** validated scientific scrollytelling and named the exact bottleneck: *"not all scientists possess web-development skills."* This project closes that gap with an LLM pipeline.
+
+---
+
+## Roadmap
+
+- [x] Render engine (Astro + 14 D3 viz modules)
+- [x] 7-agent pipeline
+- [x] Homepage with auto-discovered paper cards
+- [x] Smooth scroll transitions
+- [ ] Vercel deploy
+- [ ] arXiv ingest (PDF → structured data)
+- [ ] Upload UI (drag-and-drop PDF)
+- [ ] Concept-map viz type for qualitative papers
+
+See [ROADMAP.md](ROADMAP.md) for full detail.
+
+---
+
+## License
+
+MIT — render engine adapted from [alharkan7/alharkan7.github.io](https://github.com/alharkan7/alharkan7.github.io) (explicitly reusable per their README).
