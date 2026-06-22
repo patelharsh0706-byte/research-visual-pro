@@ -6,12 +6,9 @@ import rehypeExternalLinks from 'rehype-external-links';
 
 export default defineConfig({
   output: 'static',
-  site: 'http://localhost:4321',
-  vite: {
-    server: {
-      allowedHosts: ['localhost'],
-    },
-  },
+  site: process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : 'http://localhost:4321',
   integrations: [mdx()],
   markdown: {
     remarkPlugins: [remarkGfm, remarkSmartypants],
