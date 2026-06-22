@@ -2,7 +2,7 @@
 
 > Drop in a dense academic PDF. Get back an interactive, scroll-driven visual story — real charts, real numbers, guided narrative.
 
-**Live demo →** [web-ashy-pi-27.vercel.app](https://web-ashy-pi-27.vercel.app)
+**Live demo →** [research-visual-pro.vercel.app](https://research-visual-pro.vercel.app)
 
 ---
 
