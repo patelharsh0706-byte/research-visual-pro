@@ -238,6 +238,18 @@ export const config = {
                     ]
                 }
             }
+        },
+        {
+            id: "summary",
+            navLabel: "The Story",
+            mobileLabel: "Summary",
+            viz: {
+                key: "graphical-abstract",
+                title: "The Case at a Glance",
+                captionHtml: "The full argument in one animation. A new drug costs $2B and takes 12 years to reach patients. A repurposed drug costs $300M and takes 5 years — yet 95% of 7,000+ rare diseases still have no approved treatment. Watch the numbers count down.",
+                mount: "svg",
+                props: {}
+            }
         }
     ],
     theme: {

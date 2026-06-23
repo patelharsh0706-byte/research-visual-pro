@@ -77,6 +77,7 @@ async function initViz(panelEl: HTMLElement) {
     precision: () => import("./viz/precision"),
     sentiment: () => import("./viz/sentiment"),
     upgrade: () => import("./viz/upgrade"),
+    "graphical-abstract": () => import("./viz/graphical-abstract"),
   };
 
   const load = loaders[vizKey];
@@ -98,6 +99,7 @@ async function initViz(panelEl: HTMLElement) {
   if (vizKey === "precision" && mount.svg) return render({ mountEl: mount.svg, panelEl, props });
   if (vizKey === "sentiment" && mount.svg) return render({ mountEl: mount.svg, panelEl, props });
   if (vizKey === "upgrade" && mount.div) return render({ mountEl: mount.div, panelEl, props });
+  if (vizKey === "graphical-abstract" && mount.svg) return render({ mountEl: mount.svg, props });
 }
 
 function applyImmersiveMode(panelEl: HTMLElement) {
